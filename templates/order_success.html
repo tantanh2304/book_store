@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Đơn hàng của tôi - Bookstore{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-receipt"></i> Đơn hàng của tôi</h2>
+
+{% if orders %}
+<div class="row">
+    {% for order in orders %}
+    <div class="col-md-12 mb-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Đơn hàng #{{ order.id }}</strong>
+                    <span class="text-muted ms-3">
+                        <i class="fas fa-calendar"></i> {{ order.created_at.strftime('%d/%m/%Y %H:%M') }}
+                    </span>
+                </div>
+                <span class="badge 
+                    {% if order.status == 'completed' %}bg-success
+                    {% elif order.status == 'cancelled' %}bg-danger
+                    {% else %}bg-warning{% endif %}">
+                    {{ order.status }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>Sản phẩm:</h6>
+                        <ul class="list-unstyled">
+                            {% for item in order.order_items %}
+                            <li class="mb-2">
+                                <i class="fas fa-book text-primary"></i>
+                                <strong>{{ item.book.title }}</strong> 
+                                x{{ item.quantity }} - {{ "{:,.0f}".format(item.price * item.quantity) }} đ
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <h5 class="text-danger">
+                            Tổng: {{ "{:,.0f}".format(order.total_amount) }} đ
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="fas fa-receipt fa-5x text-muted mb-3"></i>
+    <h3>Bạn chưa có đơn hàng nào</h3>
+    <p class="text-muted">Hãy bắt đầu mua sắm ngay hôm nay!</p>
+    <a href="{{ url_for('books') }}" class="btn btn-primary">
+        <i class="fas fa-shopping-bag"></i> Mua sắm ngay
+    </a>
+</div>
+{% endif %}
+{% endblock %}
